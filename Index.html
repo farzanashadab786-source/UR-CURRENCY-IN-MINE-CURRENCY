@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Aqdas's Special Gift for Papa 🚀</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
+        #ui { position: absolute; width: 100%; text-align: center; color: white; pointer-events: none; }
+        #score { font-size: 40px; margin-top: 20px; color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
+        #banner { position: absolute; bottom: 30px; width: 100%; text-align: center; background: rgba(0,255,204,0.1); padding: 10px 0; border-top: 1px solid #00ffcc; color: gold; font-weight: bold; }
+        canvas { display: block; }
+        #start-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; border: 2px solid gold; width: 80%; }
+    </style>
+</head>
+<body onclick="gameStart()">
+    <div id="ui"><div id="score">0</div></div>
+    <div id="start-screen">
+        <h1 style="color: gold;">🚀 SPACE MISSION</h1>
+        <p>Special Game for My World's Best Papa ❤️</p>
+        <p style="font-size: 12px; color: #00ffcc;">(Tap to Jump & Avoid Obstacles)</p>
+        <h2 style="color: white; background: #00ffcc; color: black; padding: 10px; border-radius: 10px;">TAP TO START</h2>
+    </div>
+    <div id="banner">CREATED BY YOUR SON: AQDAS (THE FUTURE CODER) 💻</div>
+    <canvas id="c"></canvas>
+
+    <script>
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
+        const startScreen = document.getElementById("start-screen");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let birdY = canvas.height/2, birdV = 0, g = 0.4, score = 0, active = false, pipes = [], frame = 0;
+
+        function gameStart() { if(!active) { active = true; startScreen.style.display = "none"; score = 0; pipes = []; birdY = canvas.height/2; birdV = 0; } birdV = -7; }
+
+        function draw() {
+            ctx.fillStyle = "#000510"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            if(!active) { requestAnimationFrame(draw); return; }
+
+            // Character (Einstein/Rocket)
+            ctx.fillStyle = "gold"; ctx.beginPath(); ctx.arc(60, birdY, 15, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "white"; ctx.fillText("🚀", 52, birdY+5);
+
+            birdV += g; birdY += birdV;
+            if(frame % 100 === 0) {
+                let gap = 170, top = Math.random() * (canvas.height - gap - 100) + 50;
+                pipes.push({x: canvas.width, top: top, bot: top + gap});
+            }
+
+            pipes.forEach((p, i) => {
+                p.x -= 3.5;
+                ctx.fillStyle = "#00ffcc"; ctx.fillRect(p.x, 0, 60, p.top);
+                ctx.fillRect(p.x, p.bot, 60, canvas.height);
+                if(p.x === 60) { score++; document.getElementById("score").innerText = score; }
+                if(p.x < -60) pipes.splice(i, 1);
+                if(60 > p.x && 60 < p.x + 60 && (birdY < p.top || birdY > p.bot)) active = false, startScreen.style.display = "block";
+            });
+
+            if(birdY > canvas.height || birdY < 0) active = false, startScreen.style.display = "block";
+            frame++; requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>
+
